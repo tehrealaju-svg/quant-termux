@@ -11,8 +11,11 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/src termux/termux-docker:x86_64 bash -c '
             set -e
-            yes | pkg upgrade -y -o Dpkg::Options::=--force-confnew
-            pkg install -y clang cmake make
+            echo "deb https://packages-cf.termux.dev/apt/termux-main stable main" > $PREFIX/etc/apt/sources.list
+            rm -rf $PREFIX/etc/termux/chosen_mirrors $PREFIX/etc/termux/mirrors 2>/dev/null || true
+            apt-get update
+            yes | apt-get -y -o Dpkg::Options::=--force-confnew full-upgrade
+            apt-get install -y clang cmake make
             cp -r /src $HOME/quant-termux && cd $HOME/quant-termux
             cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
             cmake --build build -j2
