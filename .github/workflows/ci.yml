@@ -1,0 +1,25 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  termux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build inside the official Termux image
+        run: |
+          docker run --rm -v "$PWD":/src termux/termux-docker:x86_64 bash -c '
+            set -e
+            pkg install -y clang cmake make
+            cp -r /src $HOME/quant-termux && cd $HOME/quant-termux
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+            cmake --build build -j2
+            ./build/qnt --help'
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - run: cmake -S . -B build && cmake --build build -j4 && ./build/qnt --help
