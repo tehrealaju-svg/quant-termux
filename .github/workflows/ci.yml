@@ -11,6 +11,7 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/src termux/termux-docker:x86_64 bash -c '
             set -e
+            yes | pkg upgrade -y -o Dpkg::Options::=--force-confnew
             pkg install -y clang cmake make
             cp -r /src $HOME/quant-termux && cd $HOME/quant-termux
             cmake -S . -B build -DCMAKE_BUILD_TYPE=Release

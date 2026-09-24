@@ -3,6 +3,8 @@
 set -e
 echo "== Quant phone wallet setup =="
 if command -v pkg >/dev/null 2>&1; then
+  # Update first: a new clang with an old libc++ runtime fails to link.
+  yes | pkg upgrade -y -o Dpkg::Options::=--force-confnew
   pkg install -y clang cmake git make
 fi
 cd "$(dirname "$0")"
